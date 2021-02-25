@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\Hash;
+
+use DB;
 
 class AuthController extends Controller
 {
@@ -14,7 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('JWT', ['except' => ['login', 'signup']]);
     }
 
     /**
@@ -31,6 +35,24 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($token);
+    }
+    public function signup(Request $request)
+    {
+
+        $validateData = $request->validate([
+            'email' => 'required|unique:users|max:255',
+            'name' => 'required',
+            'password' => 'required|min:6|confirmed'
+
+        ]);
+
+        $data = array();
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['password'] = Hash::make($request->password);
+        DB::table('users')->insert($data);
+
+        return $this->login($request);
     }
 
     /**

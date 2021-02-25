@@ -2,25 +2,27 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: 'app-signup',
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class SignupComponent implements OnInit {
   constructor(private http: HttpClient) {}
-
-  ngOnInit(): void {}
   public form = {
+    name: null,
     email: null,
     password: null,
+    password_confirm: null,
   };
   public error = null;
   handleError(error: any) {
     this.error = error.errror;
   }
+
+  ngOnInit(): void {}
   onSubmit() {
     return this.http
-      .post('http://localhost:8000/api/auth/login', this.form)
+      .post('http://localhost:8000/api/auth/signup', this.form)
       .subscribe(
         (data) => console.log(data),
         (error) => this.handleError(error)
